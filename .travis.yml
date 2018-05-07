@@ -1,0 +1,26 @@
+sudo: required
+services:
+  - docker
+env:
+  global:
+    - IMAGE_NAME=NFhbar/SingleTxMultisig-service
+
+before_script:
+  - env > .env
+  - version="$(awk '$2 == "SINGLE_TX_VERSION" { print $3; exit }' Dockerfile)"
+  - docker pull "$IMAGE_NAME" || true
+script:
+  - docker build --pull --cache-from "$IMAGE_NAME" --tag "$IMAGE_NAME" .
+
+after_script:
+  - docker images
+
+before_deploy:
+  - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+  - docker tag "$IMAGE_NAME" "${IMAGE_NAME}:latest"
+  - docker tag "$IMAGE_NAME" "${IMAGE_NAME}:${version}"
+deploy:
+  provider: script
+  script: docker push "${IMAGE_NAME}:latest" && docker push "${IMAGE_NAME}:${version}"
+  on:
+    branch: master
