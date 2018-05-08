@@ -3,10 +3,9 @@ services:
   - docker
 env:
   global:
-    - IMAGE_NAME=NFhbar/SingleTxMultisig-service
+    - IMAGE_NAME=nfhbar/singletxmultisig
 
 before_script:
-  - env > .env
   - version="$(awk '$2 == "SINGLE_TX_VERSION" { print $3; exit }' Dockerfile)"
   - docker pull "$IMAGE_NAME" || true
 script:

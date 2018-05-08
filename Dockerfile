@@ -1,7 +1,11 @@
 FROM truffle/ci:latest
 
-ENV SINGLE_TX_VERSION 1.2.0
+ENV SINGLE_TX_VERSION 2.2.1
 
-RUN truffle install single-tx-multisig@$SINGLE_TX_VERSION
+# Create app directory
+WORKDIR /usr/src/app \
+        RUN truffle init \
+            truffle install single-tx-multisig@$SINGLE_TX_VERSION
 
-CMD["truffle", "develop"]
+# Bundle app source
+COPY . .
